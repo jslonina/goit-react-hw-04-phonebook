@@ -1,9 +1,10 @@
+import { usePhonebookContext } from '../../context/PhonebookContext';
 import { ContactListItem } from 'components/ContactListItem/ContactListItem';
 import css from './ContactsList.module.css';
-import PropTypes from 'prop-types';
 
-export const ContactsList = ({ bookArray, filter, onDelete }) => {
-  const filteredArray = bookArray.filter(contact =>
+export const ContactsList = () => {
+  const { contacts, filter, onContactDelete } = usePhonebookContext();
+  const filteredArray = contacts.filter(contact =>
     contact.name.toLowerCase().includes(filter.toLowerCase())
   );
   return (
@@ -13,15 +14,9 @@ export const ContactsList = ({ bookArray, filter, onDelete }) => {
         <ContactListItem
           key={id}
           contact={{ id, name, number }}
-          onDelete={onDelete}
+          onDelete={onContactDelete}
         />
       ))}
     </ol>
   );
-};
-
-ContactsList.propTypes = {
-  bookArray: PropTypes.array,
-  filter: PropTypes.string,
-  onDelete: PropTypes.func,
 };

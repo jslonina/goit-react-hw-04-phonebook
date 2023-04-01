@@ -1,9 +1,11 @@
+import { usePhonebookContext } from '../../context/PhonebookContext';
 import css from './Form.module.css';
-import PropTypes from 'prop-types';
-export const AddContacts = ({ onSubmit }) => {
+
+export const AddContacts = () => {
+  const { onFormSubmit } = usePhonebookContext();
   return (
     <>
-      <form className={css.form} onSubmit={onSubmit}>
+      <form className={css.form} onSubmit={onFormSubmit}>
         <label>Name</label>
         <input
           className={css.name}
@@ -26,8 +28,4 @@ export const AddContacts = ({ onSubmit }) => {
       </form>
     </>
   );
-};
-
-AddContacts.propTypes = {
-  onSubmit: PropTypes.func,
 };
