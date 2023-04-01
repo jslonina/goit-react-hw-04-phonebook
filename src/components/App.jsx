@@ -24,6 +24,7 @@ export const App = () => {
   );
 };
 
+
 PhonebookContext.Provider.propTypes = {
   value: PropTypes.shape({
     contacts: PropTypes.array,
