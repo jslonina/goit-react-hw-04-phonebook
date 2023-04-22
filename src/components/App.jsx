@@ -1,36 +1,20 @@
-import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+import { getContacts } from 'redux/selectors';
 import { AddContacts } from './Form/ContactsList';
 import { Section } from './Section/Section';
 import { SearchForm } from './SearchByName/SearchForm';
 import { ContactsList } from './ContactsList/ContactsList';
-import {
-  PhonebookContext,
-  usePhonebookContext,
-} from '../context/PhonebookContext';
-import PhonebookProvider from '../context/PhonebookContext';
 
 export const App = () => {
-  const { contacts } = usePhonebookContext();
+  const contacts = useSelector(getContacts);
+  
   return (
     <div>
-      <PhonebookProvider>
-        <Section title="Phonebook">
-          <AddContacts />
-        </Section>
-        <SearchForm />
-        {contacts !== undefined ? <ContactsList /> : <></>}
-      </PhonebookProvider>
+      <Section title="Phonebook">
+        <AddContacts />
+      </Section>
+      <SearchForm />
+      {contacts !== undefined && <ContactsList />}
     </div>
   );
-};
-
-
-PhonebookContext.Provider.propTypes = {
-  value: PropTypes.shape({
-    contacts: PropTypes.array,
-    filter: PropTypes.string,
-    onFilterChange: PropTypes.func,
-    onContactDelete: PropTypes.func,
-    onFormSubmit: PropTypes.func,
-  }),
 };

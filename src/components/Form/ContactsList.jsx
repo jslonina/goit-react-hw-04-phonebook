@@ -1,8 +1,36 @@
-import { usePhonebookContext } from '../../context/PhonebookContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { getContacts } from 'redux/selectors';
+import { addContacts } from 'redux/contactsSlice';
+import { nanoid } from 'nanoid';
 import css from './Form.module.css';
 
 export const AddContacts = () => {
-  const { onFormSubmit } = usePhonebookContext();
+  const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
+
+  const onFormSubmit = e => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const name = form.elements.name;
+    const number = form.elements.number;
+    if (
+      contacts.find(
+        contact =>
+          contact.name === name.value || contact.number === number.value
+      )
+    ) {
+      alert(`${name.value} is already in contacts`);
+      return;
+    }
+    const contact = {
+      name: name.value,
+      number: number.value,
+      id: nanoid(),
+    };
+    dispatch(addContacts(contact));
+    form.reset();
+  };
+
   return (
     <>
       <form className={css.form} onSubmit={onFormSubmit}>
