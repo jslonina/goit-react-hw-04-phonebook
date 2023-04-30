@@ -1,38 +1,46 @@
-import { nanoid } from 'nanoid';
-import { combineReducers, createSlice } from '@reduxjs/toolkit';
-import filterSlice from './filterSlice';
+import { createSlice } from '@reduxjs/toolkit';
+import { fetchContacts, addContacts, removeContact } from './operation';
 
-const initialState = [];
+const initialState = { items: [], isLoading: false, error: null };
+
+const handlePending = state => {
+  state.isLoading = true;
+};
+
+const handleRejected = (state, action) => {
+  state.isLoading = false;
+  state.error = action.payload;
+};
 
 export const contactsReducer = createSlice({
   name: 'contacts',
   initialState: initialState,
-  reducers: {
-    addContacts: {
-      reducer(state, action) {
-        state.push(action.payload);
-      },
-      prepare(contact) {
-        return {
-          payload: {
-            name: contact.name,
-            number: contact.number,
-            id: nanoid(),
-          },
-        };
-      },
+
+  extraReducers: {
+    [removeContact.pending]: handlePending,
+    [removeContact.fulfilled](state, action) {
+      state.isLoading = false;
+      state.error = null;
+      const tabIndex = state.items.find(item => item.id === action.payload);
+      state.items.splice(tabIndex, 1);
     },
-    removeContact(state, action) {
-      const index = state.findIndex(contact => contact.id === action.payload);
-      state.splice(index, 1);
+    [removeContact.rejected]: handleRejected,
+    [addContacts.pending]: handlePending,
+    [addContacts.fulfilled](state, action) {
+      state.isLoading = false;
+      state.error = null;
+      state.items.push(action.payload);
     },
+    [addContacts.rejected]: handleRejected,
+    [fetchContacts.pending]: handlePending,
+    [fetchContacts.fulfilled](state, action) {
+      state.isLoading = false;
+      state.error = null;
+      state.items = action.payload;
+    },
+    [fetchContacts.rejected]: handleRejected,
   },
 });
 
-export const { setContacts, addContacts, removeContact } =
+export const { fetchingInProgress, fetchingError, fetchingSuccess } =
   contactsReducer.actions;
-
-export const rootReducer = combineReducers({
-  contacts: contactsReducer.reducer,
-  filter: filterSlice.reducer,
-});
